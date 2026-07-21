@@ -2,8 +2,10 @@ plugins {
     // This module produces an installable APK
     alias(libs.plugins.android.application)
 
-    //Wires up the compose compiler plogun; which turns @Compasable functions into actual UI code at compile time
+    //Wires up the compose compiler plugin; which turns @Compasable functions into actual UI code at compile time
     alias(libs.plugins.kotlin.compose)
+
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -67,6 +69,14 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.compose.material.icons.extended)
+
+    implementation(libs.retrofit.core)
+    implementation(libs.retrofit.kotlinx.serialization.converter)
+    implementation(libs.okhttp.core)
+    implementation(libs.okhttp.logging.interceptor)
+
+    // Kotlin serialization over moshi/gson - compile time safety
+    implementation(libs.kotlinx.serialization.json)
 
     //Only for unit tests
     testImplementation(libs.junit)
