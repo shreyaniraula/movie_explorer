@@ -1,5 +1,6 @@
 package com.example.movieexplorer.core.network
 
+import com.example.movieexplorer.BuildConfig
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -9,7 +10,7 @@ import retrofit2.converter.kotlinx.serialization.asConverterFactory
 
 object NetworkModule {
     private const val BASE_URL = "https://www.omdbapi.com/"
-    private const val API_KEY = ""
+    private const val API_KEY = BuildConfig.OMDB_API_KEY
 
     private val json = Json {
 

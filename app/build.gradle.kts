@@ -1,3 +1,6 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     // This module produces an installable APK
     alias(libs.plugins.android.application)
@@ -8,14 +11,19 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        load(FileInputStream(localPropertiesFile))
+    }
+}
+
 android {
     // the package your generated R class lives under; a compile time/code org thing
     // com.example.movieexplorer.debug can be separate for installing a debug variant
     namespace = "com.example.movieexplorer"
     compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
+        version = release(37)
     }
 
     defaultConfig {
@@ -34,6 +42,12 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField(
+            "String",
+            "OMDB_API_KEY",
+            "\"${localProperties.getProperty("OMDB_API_KEY")}\""
+        )
     }
 
     buildTypes {
@@ -49,6 +63,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true // needed to enable BuildConfig generation
     }
 }
 

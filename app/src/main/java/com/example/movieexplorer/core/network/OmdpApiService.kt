@@ -15,7 +15,6 @@ interface OmdpApiService {
     // and resumes the coroutine with result
 
     suspend fun searchMovies(
-        @Query("apikey") apiKey: String,
         @Query("s") query: String,
         @Query("page") page: Int = 1,
     ): SearchResponseDto
