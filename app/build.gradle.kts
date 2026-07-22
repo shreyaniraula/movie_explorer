@@ -1,5 +1,5 @@
-import java.util.Properties
 import java.io.FileInputStream
+import java.util.Properties
 
 plugins {
     // This module produces an installable APK
@@ -9,6 +9,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.ksp)
 }
 
 val localProperties = Properties().apply {
@@ -92,6 +94,13 @@ dependencies {
 
     // Kotlin serialization over moshi/gson - compile time safety
     implementation(libs.kotlinx.serialization.json)
+
+    implementation(libs.hilt.android)
+
+    // KSP processes Kotlin symbols directly instead of going through a Java stub layer like Kapt,
+    // so builds are faster
+    ksp(libs.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
 
     //Only for unit tests
     testImplementation(libs.junit)

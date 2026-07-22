@@ -25,19 +25,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.movieexplorer.domain.model.Movie
-import com.example.movieexplorer.domain.repository.MovieRepository
 
 @Composable
 fun SearchScreen(
-    repository: MovieRepository,
-    onMovieClick: (String) -> Unit
+    onMovieClick: (String) -> Unit,
+    viewModel: SearchViewModel = hiltViewModel()
 ) {
-    val viewModel: SearchViewModel = viewModel(
-        factory = SearchViewModelFactory(repository)
-    )
 
     // collectAsStateWithLifecycle automatically stops collecting the StateFlow
     // when the screen goes to STOPPED (backgrounded)and resumes on STARTED

@@ -6,8 +6,9 @@ import com.example.movieexplorer.domain.model.Movie
 import com.example.movieexplorer.domain.repository.MovieRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
-class MovieRepositoryImpl(
+class MovieRepositoryImpl @Inject constructor(
     private val apiService: OmdpApiService
 ) : MovieRepository {
 
