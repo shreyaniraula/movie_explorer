@@ -4,7 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.example.movieexplorer.presentation.search.SearchScreen
+import androidx.compose.material3.MaterialTheme
+import com.example.movieexplorer.navigation.MovieExplorerNavHost
 import dagger.hilt.android.AndroidEntryPoint
 
 // Any Activity/Fragment that hosts Hilt-injected Compose screens needs @AndroidEntryPoint
@@ -15,7 +16,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            SearchScreen(onMovieClick = { /* Day 4 */ })
+            MaterialTheme {
+                MovieExplorerNavHost()
+            }
         }
     }
 }

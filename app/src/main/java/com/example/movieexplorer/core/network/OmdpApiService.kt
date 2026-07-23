@@ -1,5 +1,6 @@
 package com.example.movieexplorer.core.network
 
+import com.example.movieexplorer.data.remote.dto.MovieDetailsDto
 import com.example.movieexplorer.data.remote.dto.SearchResponseDto
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -18,4 +19,9 @@ interface OmdpApiService {
         @Query("s") query: String,
         @Query("page") page: Int = 1,
     ): SearchResponseDto
+
+    @GET(".")
+    suspend fun getMovieDetails(
+        @Query("i") imdbId: String
+    ): MovieDetailsDto
 }

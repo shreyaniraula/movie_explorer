@@ -3,6 +3,7 @@ package com.example.movieexplorer.data.repository
 import com.example.movieexplorer.core.network.OmdpApiService
 import com.example.movieexplorer.data.remote.dto.toDomain
 import com.example.movieexplorer.domain.model.Movie
+import com.example.movieexplorer.domain.model.MovieDetails
 import com.example.movieexplorer.domain.repository.MovieRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -23,5 +24,14 @@ class MovieRepositoryImpl @Inject constructor(
 
         val movies = response.search?.map { it.toDomain() } ?: emptyList()
         emit(movies)
+    }
+
+    override fun getMovieDetails(imdbId: String): Flow<MovieDetails> = flow {
+        val response = apiService.getMovieDetails(imdbId)
+
+        if (response.response == "False") {
+            throw Exception(response.error ?: "Unknown error occurred")
+        }
+        emit(response.toDomain())
     }
 }

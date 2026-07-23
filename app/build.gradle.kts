@@ -102,6 +102,10 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
+    // Coil for Compose-first projects since it's coroutine-native
+    // and has no View-system baggage; Glide is still common in legacy View-based Android.
+    implementation(libs.coil.compose)
+
     //Only for unit tests
     testImplementation(libs.junit)
 
