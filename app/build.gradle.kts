@@ -46,9 +46,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField(
-            "String",
-            "OMDB_API_KEY",
-            "\"${localProperties.getProperty("OMDB_API_KEY")}\""
+            "String", "OMDB_API_KEY", "\"${localProperties.getProperty("OMDB_API_KEY")}\""
         )
     }
 
@@ -67,6 +65,11 @@ android {
         compose = true
         buildConfig = true // needed to enable BuildConfig generation
     }
+}
+
+
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
 }
 
 dependencies {
@@ -105,6 +108,12 @@ dependencies {
     // Coil for Compose-first projects since it's coroutine-native
     // and has no View-system baggage; Glide is still common in legacy View-based Android.
     implementation(libs.coil.compose)
+
+    // room-ktx adds Kotlin specific extensions most importantly,
+    // Flow return types on DAO queries (without it you'd be stuck with callback-based or LiveData-only observation)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 
     //Only for unit tests
     testImplementation(libs.junit)
