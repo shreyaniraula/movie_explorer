@@ -3,7 +3,9 @@ package com.example.movieexplorer.di
 import android.content.Context
 import androidx.room.Room
 import com.example.movieexplorer.core.database.dao.FavouriteMovieDao
-import com.example.movieexplorer.core.database.dao.MovieExplorerDatabase
+import com.example.movieexplorer.core.database.MovieExplorerDatabase
+import com.example.movieexplorer.core.database.dao.RecentlyViewedDao
+import com.example.movieexplorer.core.database.dao.SearchHistoryDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,5 +32,17 @@ object DatabaseModule {
     @Singleton
     fun provideFavouriteMovieDao(database: MovieExplorerDatabase): FavouriteMovieDao {
         return database.favouriteMovieDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideRecentlyViewedDao(database: MovieExplorerDatabase): RecentlyViewedDao {
+        return database.recentlyViewedDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideSearchHistoryDao(database: MovieExplorerDatabase): SearchHistoryDao {
+        return database.searchHistoryDao()
     }
 }
