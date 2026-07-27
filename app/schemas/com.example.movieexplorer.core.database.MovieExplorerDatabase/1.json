@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "12c04ecfcae6ee75c476f178522ce37b",
+    "identityHash": "7e5636b8e99b2823073d3d02cc7b1560",
     "entities": [
       {
         "tableName": "favourite_movies",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`imdbId` TEXT NOT NULL, `title` TEXT NOT NULL, `year` TEXT NOT NULL, `posterUrl` TEXT, `type` TEXT NOT NULL, `addedAtTimestamp` INTEGER NOT NULL, PRIMARY KEY(`imdbId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`imdbId` TEXT NOT NULL, `title` TEXT NOT NULL, `year` TEXT NOT NULL, `posterUrl` TEXT NOT NULL, `type` TEXT NOT NULL, `addedAtTimestamp` INTEGER NOT NULL, PRIMARY KEY(`imdbId`))",
         "fields": [
           {
             "fieldPath": "imdbId",
@@ -29,7 +29,8 @@
           {
             "fieldPath": "posterUrl",
             "columnName": "posterUrl",
-            "affinity": "TEXT"
+            "affinity": "TEXT",
+            "notNull": true
           },
           {
             "fieldPath": "type",
@@ -132,7 +133,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '12c04ecfcae6ee75c476f178522ce37b')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7e5636b8e99b2823073d3d02cc7b1560')"
     ]
   }
 }

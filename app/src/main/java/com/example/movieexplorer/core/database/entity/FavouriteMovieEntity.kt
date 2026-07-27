@@ -12,7 +12,7 @@ data class FavouriteMovieEntity(
     val imdbId: String,
     val title: String,
     val year: String,
-    val posterUrl: String?,
+    val posterUrl: String,
     val type: String,
     val addedAtTimestamp: Long,
 )

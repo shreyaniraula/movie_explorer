@@ -18,17 +18,17 @@ fun MovieDto.toDomain(): Movie {
 
 fun MovieDetailsDto.toDomain(): MovieDetails {
     return MovieDetails(
-        imdbId = imdbId,
-        title = title,
-        year = year,
-        posterUrl = if (poster == "N/A") "" else poster,
-        plot = if (plot == "N/A") "" else plot,
-        runtime = if (runtime == "N/A") "" else runtime,
-        genre = genre,
-        director = director,
-        actors = actors,
-        awards = awards,
-        imdbRating = if (imdbRating == "N/A") "" else imdbRating,
-        boxOffice = if (boxOffice == "N/A") "" else boxOffice
+        imdbId = imdbId.orEmpty(),
+        title = title.orEmpty(),
+        year = year.orEmpty(),
+        posterUrl = poster.takeUnless { it.isNullOrBlank() || it == "N/A" }.orEmpty(),
+        plot = plot.takeUnless { it.isNullOrBlank() || it == "N/A" }.orEmpty(),
+        runtime = runtime.takeUnless { it.isNullOrBlank() || it == "N/A" }.orEmpty(),
+        genre = genre.orEmpty(),
+        director = director.orEmpty(),
+        actors = actors.orEmpty(),
+        awards = awards.orEmpty(),
+        imdbRating = imdbRating.takeUnless { it.isNullOrBlank() || it == "N/A" }.orEmpty(),
+        boxOffice = boxOffice.takeUnless { it.isNullOrBlank() || it == "N/A" }.orEmpty()
     )
 }
