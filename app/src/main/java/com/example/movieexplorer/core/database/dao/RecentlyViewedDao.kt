@@ -12,6 +12,9 @@ interface RecentlyViewedDao {
     @Query("SELECT * FROM recently_viewed ORDER by viewedAtTimestamp DESC LIMIT 20")
     fun getRecentlyViewed(): Flow<List<RecentlyViewedEntity>>
 
+    @Query("SELECT * FROM recently_viewed WHERE imdbId=:imdbId")
+    fun getCachedMovieDetails(imdbId: String): Flow<RecentlyViewedEntity?>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addRecentlyViewed(movie: RecentlyViewedEntity)
 }

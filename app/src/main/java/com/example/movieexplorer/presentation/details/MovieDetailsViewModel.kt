@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -47,16 +46,30 @@ class MovieDetailsViewModel @Inject constructor(
         loadMovieDetails()
     }
 
+    // the cache-observing coroutine and the network-refresh coroutine are launched independently
+    // so a cache hit renders immediately without being blocked behind a network round-trip
     private fun loadMovieDetails() {
         viewModelScope.launch {
             repository.getMovieDetails(imdbId)
-                .catch { throwable ->
-                    _uiState.value =
-                        MovieDetailsUiState.Error(throwable.message ?: "Something went wrong")
+                .collect { cached ->
+                    if (cached != null) {
+                        _uiState.value = MovieDetailsUiState.Success(cached)
+                    }
                 }
-                .collect { details ->
-                    _uiState.value = MovieDetailsUiState.Success(details)
+            // if cached is null, leave the current state as-is (Loading, until refresh resolves)
+        }
+
+        // Separately, trigger exactly one background refresh attempt
+        viewModelScope.launch {
+            try {
+                repository.refreshMovieDetails(imdbId)
+            } catch (e: Exception) {
+                // Only surface an error if we truly have nothing to show —
+                // if cache already succeeded, silently ignore the network failure
+                if (_uiState.value !is MovieDetailsUiState.Success) {
+                    _uiState.value = MovieDetailsUiState.Error(e.message ?: "Something went wrong")
                 }
+            }
         }
     }
 

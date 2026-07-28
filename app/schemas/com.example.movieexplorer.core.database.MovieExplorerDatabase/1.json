@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "7e5636b8e99b2823073d3d02cc7b1560",
+    "identityHash": "0d2effc66a9dc11ca83cd31c386f8c12",
     "entities": [
       {
         "tableName": "favourite_movies",
@@ -54,7 +54,7 @@
       },
       {
         "tableName": "recently_viewed",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`imdbId` TEXT NOT NULL, `title` TEXT NOT NULL, `year` TEXT NOT NULL, `posterUrl` TEXT NOT NULL, `type` TEXT NOT NULL, `viewedAtTimestamp` INTEGER NOT NULL, PRIMARY KEY(`imdbId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`imdbId` TEXT NOT NULL, `title` TEXT NOT NULL, `year` TEXT NOT NULL, `posterUrl` TEXT NOT NULL, `type` TEXT NOT NULL, `plot` TEXT NOT NULL, `runtime` TEXT NOT NULL, `genre` TEXT NOT NULL, `director` TEXT NOT NULL, `actors` TEXT NOT NULL, `awards` TEXT NOT NULL, `imdbRating` TEXT NOT NULL, `boxOffice` TEXT NOT NULL, `viewedAtTimestamp` INTEGER NOT NULL, PRIMARY KEY(`imdbId`))",
         "fields": [
           {
             "fieldPath": "imdbId",
@@ -83,6 +83,54 @@
           {
             "fieldPath": "type",
             "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "plot",
+            "columnName": "plot",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "runtime",
+            "columnName": "runtime",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "genre",
+            "columnName": "genre",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "director",
+            "columnName": "director",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "actors",
+            "columnName": "actors",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "awards",
+            "columnName": "awards",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "imdbRating",
+            "columnName": "imdbRating",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "boxOffice",
+            "columnName": "boxOffice",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -133,7 +181,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7e5636b8e99b2823073d3d02cc7b1560')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0d2effc66a9dc11ca83cd31c386f8c12')"
     ]
   }
 }
