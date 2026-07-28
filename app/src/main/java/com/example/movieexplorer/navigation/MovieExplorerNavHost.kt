@@ -8,7 +8,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.movieexplorer.presentation.details.MovieDetailsScreen
+import com.example.movieexplorer.presentation.home.HomeScreen
 import com.example.movieexplorer.presentation.search.SearchScreen
+import com.example.movieexplorer.presentation.settings.SettingsScreen
 
 @Composable
 fun MovieExplorerNavHost(
@@ -16,7 +18,7 @@ fun MovieExplorerNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Search.route
+        startDestination = Screen.Home.route
     ) {
         composable(route = Screen.Search.route) {
             SearchScreen(
@@ -33,6 +35,22 @@ fun MovieExplorerNavHost(
             MovieDetailsScreen(
                 onBackClick = { navController.popBackStack() }
             )
+        }
+
+        composable(
+            route = Screen.Home.route,
+        ) {
+            HomeScreen(
+                onMovieClick = { imdbId -> navController.navigate(Screen.Details.createRoute(imdbId)) },
+                onSearchClick = { navController.navigate(Screen.Search.route) },
+                onSettingsClick = { navController.navigate(Screen.Settings.route) }
+            )
+        }
+
+        composable(
+            route = Screen.Settings.route,
+        ) {
+            SettingsScreen()
         }
     }
 }

@@ -37,6 +37,7 @@ private val LightColorScheme = lightColorScheme(
 fun MovieExplorerTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
+    // Sets color from user's wallpaper so will vary per device
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {

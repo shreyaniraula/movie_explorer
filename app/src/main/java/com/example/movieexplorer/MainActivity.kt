@@ -4,8 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.getValue
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.movieexplorer.navigation.MovieExplorerNavHost
+import com.example.movieexplorer.presentation.settings.SettingsViewModel
+import com.example.movieexplorer.ui.theme.MovieExplorerTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 // Any Activity/Fragment that hosts Hilt-injected Compose screens needs @AndroidEntryPoint
@@ -16,7 +20,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MaterialTheme {
+            val settingsViewModel: SettingsViewModel = hiltViewModel()
+            val isDarkMode by settingsViewModel.isDarkMode.collectAsStateWithLifecycle()
+            MovieExplorerTheme(darkTheme = isDarkMode) {
                 MovieExplorerNavHost()
             }
         }

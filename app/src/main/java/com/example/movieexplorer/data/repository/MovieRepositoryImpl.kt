@@ -2,6 +2,7 @@ package com.example.movieexplorer.data.repository
 
 import com.example.movieexplorer.core.database.dao.FavouriteMovieDao
 import com.example.movieexplorer.core.database.dao.RecentlyViewedDao
+import com.example.movieexplorer.core.database.dao.SearchHistoryDao
 import com.example.movieexplorer.core.database.entity.FavouriteMovieEntity
 import com.example.movieexplorer.core.database.entity.RecentlyViewedEntity
 import com.example.movieexplorer.core.network.OmdpApiService
@@ -20,6 +21,7 @@ class MovieRepositoryImpl @Inject constructor(
     private val apiService: OmdpApiService,
     private val favouriteMovieDao: FavouriteMovieDao,
     private val recentlyViewedDao: RecentlyViewedDao,
+    private val searchHistoryDao: SearchHistoryDao,
 ) : MovieRepository {
 
     // flow instead of just suspend fun for later
@@ -87,6 +89,40 @@ class MovieRepositoryImpl @Inject constructor(
                     addedAtTimestamp = System.currentTimeMillis()
                 )
             )
+        }
+    }
+
+    override fun getAllFavourites(): Flow<List<Movie>> {
+        return favouriteMovieDao.getAllFavourites().map { list ->
+            list.map { entity ->
+                Movie(
+                    imdbId = entity.imdbId,
+                    title = entity.title,
+                    year = entity.year,
+                    posterUrl = entity.posterUrl,
+                    type = entity.type
+                )
+            }
+        }
+    }
+
+    override fun getRecentlyViewed(): Flow<List<Movie>> {
+        return recentlyViewedDao.getRecentlyViewed().map { list ->
+            list.map { entity ->
+                Movie(
+                    imdbId = entity.imdbId,
+                    title = entity.title,
+                    year = entity.year,
+                    posterUrl = entity.posterUrl,
+                    type = entity.type
+                )
+            }
+        }
+    }
+
+    override fun getSearchHistory(): Flow<List<String>> {
+        return searchHistoryDao.getSearchHistory().map { list ->
+            list.map { it.query }
         }
     }
 }

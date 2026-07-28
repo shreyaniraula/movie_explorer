@@ -10,4 +10,8 @@ interface MovieRepository {
     suspend fun refreshMovieDetails(imdbId: String)
     fun isFavourite(imdbId: String): Flow<Boolean>
     suspend fun toggleFavourite(movieDetails: MovieDetails)
+    fun getAllFavourites(): Flow<List<Movie>>
+    fun getRecentlyViewed(): Flow<List<Movie>>
+    fun getSearchHistory(): Flow<List<String>>
+
 }
