@@ -14,4 +14,6 @@ interface MovieRepository {
     fun getRecentlyViewed(): Flow<List<Movie>>
     fun getSearchHistory(): Flow<List<String>>
 
+    suspend fun saveSearchQuery(query: String)
+
 }

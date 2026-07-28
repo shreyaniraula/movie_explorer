@@ -39,7 +39,8 @@ fun SearchScreen(
     // collectAsStateWithLifecycle automatically stops collecting the StateFlow
     // when the screen goes to STOPPED (backgrounded)and resumes on STARTED
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    var query by remember { mutableStateOf("") }
+    val lastSearch by viewModel.lastSearch.collectAsStateWithLifecycle()
+    var query by remember(lastSearch) { mutableStateOf(lastSearch) }
 
     Scaffold() { padding ->
         Column(

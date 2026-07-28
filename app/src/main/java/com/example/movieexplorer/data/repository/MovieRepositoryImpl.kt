@@ -5,6 +5,7 @@ import com.example.movieexplorer.core.database.dao.RecentlyViewedDao
 import com.example.movieexplorer.core.database.dao.SearchHistoryDao
 import com.example.movieexplorer.core.database.entity.FavouriteMovieEntity
 import com.example.movieexplorer.core.database.entity.RecentlyViewedEntity
+import com.example.movieexplorer.core.database.entity.SearchHistoryEntity
 import com.example.movieexplorer.core.network.OmdpApiService
 import com.example.movieexplorer.data.local.dto.toDomain
 import com.example.movieexplorer.data.remote.dto.toDomain
@@ -124,5 +125,11 @@ class MovieRepositoryImpl @Inject constructor(
         return searchHistoryDao.getSearchHistory().map { list ->
             list.map { it.query }
         }
+    }
+
+    override suspend fun saveSearchQuery(query: String) {
+        searchHistoryDao.addSearchQuery(
+            SearchHistoryEntity(query = query, searchedAtTimestamp = System.currentTimeMillis())
+        )
     }
 }
