@@ -20,6 +20,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -83,41 +84,50 @@ fun SearchScreen(
                 }
 
                 is LoadState.NotLoading -> {
-                    LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp)) {
-                        items(lazyPagingItems.itemCount) { index ->
-                            lazyPagingItems[index]?.let { movie ->
-                                MovieListItem(
-                                    movie = movie,
-                                    onClick = { onMovieClick(movie.imdbId) })
+                    PullToRefreshBox(
+                        isRefreshing = lazyPagingItems.loadState.refresh is LoadState.Loading,
+                        onRefresh = { lazyPagingItems.refresh() }
+                    ) {
+                        LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp)) {
+                            items(lazyPagingItems.itemCount) { index ->
+                                lazyPagingItems[index]?.let { movie ->
+                                    MovieListItem(
+                                        movie = movie,
+                                        onClick = { onMovieClick(movie.imdbId) })
+                                }
                             }
-                        }
 
-                        item {
-                            when (val append = lazyPagingItems.loadState.append) {
-                                is LoadState.Loading -> {
-                                    Box(
-                                        Modifier
-                                            .fillMaxWidth()
-                                            .padding(16.dp),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                            item {
+                                when (val append = lazyPagingItems.loadState.append) {
+                                    is LoadState.Loading -> {
+                                        Box(
+                                            Modifier
+                                                .fillMaxWidth()
+                                                .padding(16.dp),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                                        }
                                     }
-                                }
 
-                                is LoadState.Error -> {
-                                    Row(
-                                        Modifier
-                                            .fillMaxWidth()
-                                            .padding(16.dp),
-                                        horizontalArrangement = Arrangement.Center
-                                    ) {
-                                        Text("Failed to load more")
-                                        TextButton(onClick = { lazyPagingItems.retry() }) { Text("Retry") }
+                                    is LoadState.Error -> {
+                                        Row(
+                                            Modifier
+                                                .fillMaxWidth()
+                                                .padding(16.dp),
+                                            horizontalArrangement = Arrangement.Center
+                                        ) {
+                                            Text("Failed to load more")
+                                            TextButton(onClick = { lazyPagingItems.retry() }) {
+                                                Text(
+                                                    "Retry"
+                                                )
+                                            }
+                                        }
                                     }
-                                }
 
-                                else -> {}
+                                    else -> {}
+                                }
                             }
                         }
                     }
