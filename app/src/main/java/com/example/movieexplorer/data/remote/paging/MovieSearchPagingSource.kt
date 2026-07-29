@@ -18,6 +18,11 @@ class MovieSearchPagingSource(
             val response = apiService.searchMovies(query = query, page = page)
 
             if (response.response == "False") {
+                // OMDb returns this specific message for zero matches — that's not a real error,
+                // just an empty result. Treat it as a successful empty page instead.
+                if (response.error == "Movie not found!") {
+                    return LoadResult.Page(data = emptyList(), prevKey = null, nextKey = null)
+                }
                 return LoadResult.Error(Exception(response.error ?: "Unknown error"))
             }
 

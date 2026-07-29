@@ -84,52 +84,66 @@ fun SearchScreen(
                 }
 
                 is LoadState.NotLoading -> {
-                    PullToRefreshBox(
-                        isRefreshing = lazyPagingItems.loadState.refresh is LoadState.Loading,
-                        onRefresh = { lazyPagingItems.refresh() }
-                    ) {
-                        LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp)) {
-                            items(lazyPagingItems.itemCount) { index ->
-                                lazyPagingItems[index]?.let { movie ->
-                                    MovieListItem(
-                                        movie = movie,
-                                        onClick = { onMovieClick(movie.imdbId) })
-                                }
-                            }
-
-                            item {
-                                when (val append = lazyPagingItems.loadState.append) {
-                                    is LoadState.Loading -> {
-                                        Box(
-                                            Modifier
-                                                .fillMaxWidth()
-                                                .padding(16.dp),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            CircularProgressIndicator(modifier = Modifier.size(24.dp))
-                                        }
+                    if (lazyPagingItems.itemCount == 0) {
+                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Text("No movies found for \"$query\"")
+                        }
+                    } else {
+                        PullToRefreshBox(
+                            isRefreshing = lazyPagingItems.loadState.refresh is LoadState.Loading,
+                            onRefresh = { lazyPagingItems.refresh() }
+                        ) {
+                            LazyColumn(
+                                Modifier.fillMaxSize(),
+                                contentPadding = PaddingValues(16.dp)
+                            ) {
+                                items(lazyPagingItems.itemCount) { index ->
+                                    lazyPagingItems[index]?.let { movie ->
+                                        MovieListItem(
+                                            movie = movie,
+                                            onClick = { onMovieClick(movie.imdbId) })
                                     }
+                                }
 
-                                    is LoadState.Error -> {
-                                        Row(
-                                            Modifier
-                                                .fillMaxWidth()
-                                                .padding(16.dp),
-                                            horizontalArrangement = Arrangement.Center
-                                        ) {
-                                            Text("Failed to load more")
-                                            TextButton(onClick = { lazyPagingItems.retry() }) {
-                                                Text(
-                                                    "Retry"
+                                item {
+                                    when (val append = lazyPagingItems.loadState.append) {
+                                        is LoadState.Loading -> {
+                                            Box(
+                                                Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(16.dp),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                CircularProgressIndicator(
+                                                    modifier = Modifier.size(
+                                                        24.dp
+                                                    )
                                                 )
                                             }
                                         }
-                                    }
 
-                                    else -> {}
+                                        is LoadState.Error -> {
+                                            Row(
+                                                Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(16.dp),
+                                                horizontalArrangement = Arrangement.Center
+                                            ) {
+                                                Text("Failed to load more")
+                                                TextButton(onClick = { lazyPagingItems.retry() }) {
+                                                    Text(
+                                                        "Retry"
+                                                    )
+                                                }
+                                            }
+                                        }
+
+                                        else -> {}
+                                    }
                                 }
                             }
                         }
+
                     }
                 }
             }
