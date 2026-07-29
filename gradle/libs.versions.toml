@@ -19,6 +19,7 @@ hiltNavigationCompose = "1.4.0"
 coilCompose = "2.7.0"
 room = "2.8.4"
 datastorePreferences = "1.2.1"
+paging = "3.5.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -50,6 +51,8 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastorePreferences" }
+androidx-paging-common = {group="androidx.paging", name="paging-common", version.ref="paging"}
+androidx-paging-compose = {group="androidx.paging", name="paging-compose", version.ref="paging"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -1,5 +1,8 @@
 package com.example.movieexplorer.data.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.example.movieexplorer.core.database.dao.FavouriteMovieDao
 import com.example.movieexplorer.core.database.dao.RecentlyViewedDao
 import com.example.movieexplorer.core.database.dao.SearchHistoryDao
@@ -9,6 +12,7 @@ import com.example.movieexplorer.core.database.entity.SearchHistoryEntity
 import com.example.movieexplorer.core.network.OmdpApiService
 import com.example.movieexplorer.data.local.dto.toDomain
 import com.example.movieexplorer.data.remote.dto.toDomain
+import com.example.movieexplorer.data.remote.paging.MovieSearchPagingSource
 import com.example.movieexplorer.domain.model.Movie
 import com.example.movieexplorer.domain.model.MovieDetails
 import com.example.movieexplorer.domain.repository.MovieRepository
@@ -131,5 +135,13 @@ class MovieRepositoryImpl @Inject constructor(
         searchHistoryDao.addSearchQuery(
             SearchHistoryEntity(query = query, searchedAtTimestamp = System.currentTimeMillis())
         )
+    }
+
+    override fun searchMoviesPaged(query: String): Flow<PagingData<Movie>> {
+        return Pager(
+            // don't show empty placeholder items for unloaded pages
+            config = PagingConfig(pageSize = 10, enablePlaceholders = false),
+            pagingSourceFactory = { MovieSearchPagingSource(apiService, query) }
+        ).flow
     }
 }

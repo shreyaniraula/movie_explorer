@@ -1,5 +1,6 @@
 package com.example.movieexplorer.presentation.search
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -7,8 +8,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
@@ -18,16 +19,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.movieexplorer.domain.model.Movie
 
 @Composable
@@ -36,20 +37,21 @@ fun SearchScreen(
     viewModel: SearchViewModel = hiltViewModel()
 ) {
 
-    // collectAsStateWithLifecycle automatically stops collecting the StateFlow
-    // when the screen goes to STOPPED (backgrounded)and resumes on STARTED
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val lastSearch by viewModel.lastSearch.collectAsStateWithLifecycle()
-    var query by remember(lastSearch) { mutableStateOf(lastSearch) }
+    val query by viewModel.query.collectAsStateWithLifecycle()
+
+    // collectAsLazyPagingItems() turns Flow<PagingData<Movie>> into something
+    // LazyColumn can loop over — like a normal List, but loads more pages as you scroll.
+    val lazyPagingItems = viewModel.pagedMovies.collectAsLazyPagingItems()
 
     Scaffold() { padding ->
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
         ) {
             OutlinedTextField(
                 value = query,
                 onValueChange = {
-                    query = it
                     viewModel.onSearchQueryChanged(it)
                 },
                 label = { Text("Search movies") },
@@ -59,45 +61,64 @@ fun SearchScreen(
                     .fillMaxWidth()
                     .padding(16.dp)
             )
-
-            when (val state = uiState) {
-                is SearchUiState.Idle -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("Search for a movie to get started")
-                    }
+            if (query.isBlank()) {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("Search for a movie to get started")
                 }
+                return@Column
+            }
 
-                is SearchUiState.Loading -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
+
+            when (val refresh = lazyPagingItems.loadState.refresh) {
+                is LoadState.Loading -> {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         CircularProgressIndicator()
                     }
                 }
 
-                is SearchUiState.Error -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("Error: ${state.message}")
+                is LoadState.Error -> {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text("Error: ${refresh.error.message}")
                     }
                 }
 
-                is SearchUiState.Success -> {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(16.dp)
-                    ) {
-                        items(state.movies) { movie ->
-                            MovieListItem(
-                                movie = movie,
-                                onClick = { onMovieClick(movie.imdbId) }
-                            )
+                is LoadState.NotLoading -> {
+                    LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp)) {
+                        items(lazyPagingItems.itemCount) { index ->
+                            lazyPagingItems[index]?.let { movie ->
+                                MovieListItem(
+                                    movie = movie,
+                                    onClick = { onMovieClick(movie.imdbId) })
+                            }
+                        }
+
+                        item {
+                            when (val append = lazyPagingItems.loadState.append) {
+                                is LoadState.Loading -> {
+                                    Box(
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .padding(16.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                                    }
+                                }
+
+                                is LoadState.Error -> {
+                                    Row(
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .padding(16.dp),
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+                                        Text("Failed to load more")
+                                        TextButton(onClick = { lazyPagingItems.retry() }) { Text("Retry") }
+                                    }
+                                }
+
+                                else -> {}
+                            }
                         }
                     }
                 }

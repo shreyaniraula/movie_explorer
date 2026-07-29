@@ -117,6 +117,9 @@ dependencies {
 
     implementation(libs.androidx.datastore.preferences)
 
+    implementation(libs.androidx.paging.common)
+    implementation(libs.androidx.paging.compose)
+
     //Only for unit tests
     testImplementation(libs.junit)
 

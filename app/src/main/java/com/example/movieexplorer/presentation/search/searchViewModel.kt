@@ -2,16 +2,18 @@ package com.example.movieexplorer.presentation.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.example.movieexplorer.core.datastore.UserPreferencesDataStore
+import com.example.movieexplorer.domain.model.Movie
 import com.example.movieexplorer.domain.repository.MovieRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,40 +22,30 @@ class SearchViewModel @Inject constructor(
     private val repository: MovieRepository,
     private val preferencesDataStore: UserPreferencesDataStore,
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow<SearchUiState>(SearchUiState.Idle)
 
-    // _uiState is mutable and uiState is read-only
-    // Only the viewmodel is allowed to change the screen's data(_uiState)
-    // The screen can look at the data(uiState) but cannot change it directly.
-    val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
+    // _query replaces _uiState.
+    // We don't need an "Idle" state anymore — if query is blank, UI just shows the empty message.
+    // Paging 3 handles Loading/Error/Success on its own via LoadState.
+    private val _query = MutableStateFlow("")
+    val query: StateFlow<String> = _query.asStateFlow()
 
-    val lastSearch: StateFlow<String> = preferencesDataStore.lastSearch
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
+    // Only search when query is non-blank.
+    // flatMapLatest = if a new query comes in, cancel the old search, start a new one.
+    // cachedIn(viewModelScope) = keep loaded pages in memory across screen rotation.
+
+    val pagedMovies: Flow<PagingData<Movie>> = _query
+        .filter { it.isNotBlank() }
+        .flatMapLatest { q -> repository.searchMoviesPaged(q) }
+        .cachedIn(viewModelScope)
 
     fun onSearchQueryChanged(query: String) {
-        if (query.isBlank()) {
-            _uiState.value = SearchUiState.Idle
-            return
-        }
+        _query.value = query;
 
-        // Starts a background task (like fetching data)
-        // scope means that it is running only while the activity is running
-        viewModelScope.launch {
-            preferencesDataStore.setLastSearch(query)
-            repository.saveSearchQuery(query)
-            repository.searchMovies(query)
-
-                // initially show loading
-                .onStart { _uiState.value = SearchUiState.Loading }
-
-                // catches errors that happen during the search
-                .catch { throwable ->
-                    _uiState.value =
-                        SearchUiState.Error(throwable.message ?: "Something went wrong")
-                }
-                .collect { movies ->
-                    _uiState.value = SearchUiState.Success(movies)
-                }
+        if (query.isNotBlank()) {
+            viewModelScope.launch {
+                preferencesDataStore.setLastSearch(query)
+                repository.saveSearchQuery(query)
+            }
         }
     }
 }
