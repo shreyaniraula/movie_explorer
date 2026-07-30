@@ -74,6 +74,10 @@ ksp {
 
 dependencies {
 
+    configurations.all {
+        exclude(group = "com.google.guava", module = "listenablefuture")
+    }
+
     // platform() imports a Bill of Materials(BOM);
     // a single artifact that pins compatible versions for all compose libraries together;
     // so removes manual version-match and risk mismatches.
@@ -81,6 +85,7 @@ dependencies {
 
     // implementation-available to this module's compile+runtime but not exposed to modules that depend on this one
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.compiler)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
@@ -112,7 +117,9 @@ dependencies {
     // room-ktx adds Kotlin specific extensions most importantly,
     // Flow return types on DAO queries (without it you'd be stuck with callback-based or LiveData-only observation)
     implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.room.ktx) {
+        exclude(group = "com.google.guava", module = "listenablefuture")
+    }
     ksp(libs.androidx.room.compiler)
 
     implementation(libs.androidx.datastore.preferences)
