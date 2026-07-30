@@ -1,5 +1,6 @@
 package com.example.movieexplorer.presentation.details
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -51,11 +53,11 @@ fun MovieDetailsScreen(
             },
             actions = {
                 val isFavourite by viewModel.isFavourite.collectAsStateWithLifecycle()
-                IconButton(onClick = {viewModel.onFavouriteClick()}) {
+                IconButton(onClick = { viewModel.onFavouriteClick() }) {
                     Icon(
-                        imageVector = if(isFavourite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                        contentDescription = if(isFavourite) "Remove from favourites" else "Add to favourites",
-                        tint = if(isFavourite) MaterialTheme.colorScheme.error else LocalContentColor.current
+                        imageVector = if (isFavourite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                        contentDescription = if (isFavourite) "Remove from favourites" else "Add to favourites",
+                        tint = if (isFavourite) MaterialTheme.colorScheme.error else LocalContentColor.current
                     )
                 }
             }
@@ -72,10 +74,19 @@ fun MovieDetailsScreen(
                 }
 
                 is MovieDetailsUiState.Error -> {
-                    Text(
-                        text = "Error: ${state.message}",
-                        modifier = Modifier.align(Alignment.Center)
-                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                    ) {
+                        Text(text = "Error: ${state.message}")
+                        Spacer(Modifier.height(8.dp))
+                        Button(onClick = { viewModel.onRetryClick() }) {
+                            Text("Retry")
+                        }
+                    }
                 }
 
                 is MovieDetailsUiState.Success -> {

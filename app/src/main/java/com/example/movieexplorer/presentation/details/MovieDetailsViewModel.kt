@@ -81,4 +81,14 @@ class MovieDetailsViewModel @Inject constructor(
             }
         }
     }
+
+    fun onRetryClick() {
+        viewModelScope.launch {
+            try {
+                repository.refreshMovieDetails(imdbId)
+            } catch (e: Exception) {
+                _uiState.value = MovieDetailsUiState.Error(e.message ?: "Something went wrong")
+            }
+        }
+    }
 }
