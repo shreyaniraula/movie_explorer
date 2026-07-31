@@ -144,4 +144,9 @@ class MovieRepositoryImpl @Inject constructor(
             pagingSourceFactory = { MovieSearchPagingSource(apiService, query) }
         ).flow
     }
+
+    override suspend fun cleanupOldRecentlyViewed(olderThanDays: Int) {
+        val cutoff = System.currentTimeMillis() - (olderThanDays * 24 * 60 * 60 * 1000L)
+        recentlyViewedDao.deleteOlderThan(cutoff)
+    }
 }

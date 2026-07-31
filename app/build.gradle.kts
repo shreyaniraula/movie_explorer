@@ -115,7 +115,7 @@ dependencies {
     implementation(libs.coil.compose)
 
     // room-ktx adds Kotlin specific extensions most importantly,
-    // Flow return types on DAO queries (without it you'd be stuck with callback-based or LiveData-only observation)
+    // Flow return types on DAO queries (without it, you'd be stuck with callback-based or LiveData-only observation)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx) {
         exclude(group = "com.google.guava", module = "listenablefuture")
@@ -126,6 +126,10 @@ dependencies {
 
     implementation(libs.androidx.paging.common)
     implementation(libs.androidx.paging.compose)
+
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.work)
+    ksp(libs.androidx.hilt.compiler)
 
     //Only for unit tests
     testImplementation(libs.junit)

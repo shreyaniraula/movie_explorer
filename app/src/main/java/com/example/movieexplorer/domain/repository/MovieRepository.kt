@@ -16,4 +16,5 @@ interface MovieRepository {
     fun getSearchHistory(): Flow<List<String>>
     suspend fun saveSearchQuery(query: String)
     fun searchMoviesPaged(query: String): Flow<PagingData<Movie>>
+    suspend fun cleanupOldRecentlyViewed(olderThanDays: Int)
 }

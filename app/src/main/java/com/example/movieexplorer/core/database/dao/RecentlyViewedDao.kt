@@ -17,4 +17,7 @@ interface RecentlyViewedDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addRecentlyViewed(movie: RecentlyViewedEntity)
+
+    @Query("DELETE FROM recently_viewed WHERE viewedAtTimestamp< :cutoffTimestamp")
+    suspend fun deleteOlderThan(cutoffTimestamp: Long)
 }
