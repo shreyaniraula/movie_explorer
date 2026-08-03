@@ -1,5 +1,6 @@
 package com.example.movieexplorer.presentation.details
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -54,11 +55,15 @@ fun MovieDetailsScreen(
             actions = {
                 val isFavourite by viewModel.isFavourite.collectAsStateWithLifecycle()
                 IconButton(onClick = { viewModel.onFavouriteClick() }) {
-                    Icon(
-                        imageVector = if (isFavourite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                        contentDescription = if (isFavourite) "Remove from favourites" else "Add to favourites",
-                        tint = if (isFavourite) MaterialTheme.colorScheme.error else LocalContentColor.current
-                    )
+
+                    // fades between two composables based on a changing state value, zero manual animation code needed
+                    Crossfade(targetState = isFavourite, label = "favourite_icon") { favourite ->
+                        Icon(
+                            imageVector = if (favourite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                            contentDescription = if (favourite) "Remove from favorites" else "Add to favorites",
+                            tint = if (favourite) MaterialTheme.colorScheme.error else LocalContentColor.current
+                        )
+                    }
                 }
             }
         )

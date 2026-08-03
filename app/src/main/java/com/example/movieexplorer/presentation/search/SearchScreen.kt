@@ -101,7 +101,9 @@ fun SearchScreen(
                                     lazyPagingItems[index]?.let { movie ->
                                         MovieListItem(
                                             movie = movie,
-                                            onClick = { onMovieClick(movie.imdbId) })
+                                            onClick = { onMovieClick(movie.imdbId) },
+                                            modifier = Modifier.animateItem()
+                                        )
                                     }
                                 }
 
@@ -154,11 +156,12 @@ fun SearchScreen(
 @Composable
 private fun MovieListItem(
     movie: Movie,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Card(
         onClick = onClick,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 6.dp)
     ) {
