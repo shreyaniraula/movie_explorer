@@ -9,8 +9,13 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
 // WorkManager survives things a plain coroutine can't
+
+// @HiltWorker tells HIltWorkerFactory - this Worker needs special handling
+// build the Hilt-known parts, and accept the WorkManager-known parts separately.
 @HiltWorker
+// AssistedInject replaces the usual Inject on the constructor, since this constructor mixes two sources of parameters instead of one.
 class CacheCleanupWorker @AssistedInject constructor(
+    // @Assisted marks which parameters come from the caller, not from Hilt.
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val repository: MovieRepository,

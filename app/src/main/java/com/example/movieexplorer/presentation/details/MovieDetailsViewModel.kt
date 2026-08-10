@@ -17,6 +17,8 @@ import javax.inject.Inject
 // Hilt automatically injects SavedStateHandle into the ViewModel.
 // It acts like a Map holding navigation arguments passed to this screen
 // (e.g., savedStateHandle["imdbId"] gets the "imdbId" passed in the route).
+// @HiltViewModel connects Hilt's dependency-building to Android's ViewModel system
+// so the view model gets both-dependencies injected and rotation-survival behaviour.
 @HiltViewModel
 class MovieDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
@@ -51,6 +53,7 @@ class MovieDetailsViewModel @Inject constructor(
     private fun loadMovieDetails() {
         viewModelScope.launch {
             repository.getMovieDetails(imdbId)
+                // collect runs the code everytime the Flow emits a new value
                 .collect { cached ->
                     if (cached != null) {
                         _uiState.value = MovieDetailsUiState.Success(cached)
@@ -62,6 +65,9 @@ class MovieDetailsViewModel @Inject constructor(
         // Separately, trigger exactly one background refresh attempt
         viewModelScope.launch {
             try {
+                // call the api and if successful write the result into Room.
+                // no need to update _uiState because writing to  Room causes the upper block's collect
+                // to fire again automatically with new cached data
                 repository.refreshMovieDetails(imdbId)
             } catch (e: Exception) {
                 // Only surface an error if we truly have nothing to show —

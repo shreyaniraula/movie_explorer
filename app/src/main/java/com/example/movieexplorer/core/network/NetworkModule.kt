@@ -19,6 +19,8 @@ import javax.inject.Singleton
 // Module and InstallIn(SingletonComponent::class) tells Hilt "these @Provides functions are
 // recipes for building types, and live in the app-wide singleton scope"
 @Module
+
+// InstallIn tells Hilt which scope these instructions belong to
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
     private const val BASE_URL = "https://www.omdbapi.com/"
@@ -58,6 +60,7 @@ object NetworkModule {
             .build()
     }
 
+    // Hilt calls this any time an OmdbApiService is referenced
     @Provides
     @Singleton
     fun provideOmdbApiService(retrofit: Retrofit): OmdpApiService {

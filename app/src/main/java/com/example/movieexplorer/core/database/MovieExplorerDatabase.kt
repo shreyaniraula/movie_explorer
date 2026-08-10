@@ -5,10 +5,11 @@ import androidx.room.RoomDatabase
 import com.example.movieexplorer.core.database.dao.FavouriteMovieDao
 import com.example.movieexplorer.core.database.dao.RecentlyViewedDao
 import com.example.movieexplorer.core.database.dao.SearchHistoryDao
+import com.example.movieexplorer.core.database.entity.FavouriteMovieEntity
 import com.example.movieexplorer.core.database.entity.RecentlyViewedEntity
 import com.example.movieexplorer.core.database.entity.SearchHistoryEntity
-import com.example.movieexplorer.core.database.entity.FavouriteMovieEntity
 
+// @Database is one class tying entities and DAOs together.
 @Database(
     entities = [
         FavouriteMovieEntity::class,

@@ -21,3 +21,6 @@ abstract class RepositoryModule {
 
 // use @Binds for interface→implementation mapping
 // use @Provides when you need actual construction logic
+// @Binds goes on an abstract fun inside an abstract class marked @Module.
+// Used specifically for "interface X should map to implementation Y,"
+// nothing else — no real code needed, just a type mapping

@@ -7,6 +7,8 @@ import androidx.room.Query
 import com.example.movieexplorer.core.database.entity.FavouriteMovieEntity
 import kotlinx.coroutines.flow.Flow
 
+// @Dao is an interface listing the actual queries allowed to run
+// Room generates the real implementation at compile time
 @Dao
 interface FavouriteMovieDao {
 

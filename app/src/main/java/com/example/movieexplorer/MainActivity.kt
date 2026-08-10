@@ -74,3 +74,16 @@ private fun MainContent(connectivityObserver: ConnectivityObserver) {
 //    - MovieRepository -> mapped to MovieRepositoryImpl (@Binds)
 //    - OmdbApiService  -> built by NetworkModule (@Provides)
 // 4. Returns a ready-to-use SearchViewModel.
+
+
+
+
+
+// Coroutines are for async code-like network or database calls in a sync style
+// suspend fun can't be called from anywhere-it needs a coroutine to run inside.
+// eg inside viewModelScope.launch{}
+// launch starts a new coroutine. Everything inside that block can call suspend fun freely.
+
+// Flow is like subscribing to updates-it emits new values whenever something changes
+// StateFlow is a Flow that always holds a current value and immediately gives new observers that value.
+// It's the standard way to expose UI state from a ViewModel, since the screen always needs to know the current state, not just wait for future changes.
